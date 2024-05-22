@@ -10,14 +10,14 @@ import SwiftUI
 
 struct PresentingSearchResultsView: View
 {
+    @Environment(\.dismiss) var dismiss
+    
     @EnvironmentObject var appState: AppState
 
     @ObservedObject var searchResultTracker: SearchResultTracker
 
     @Binding var packageRequested: String
     @Binding var foundPackageSelection: Set<UUID>
-
-    @Binding var isShowingSheet: Bool
 
     @Binding var packageInstallationProcessStep: PackageInstallationProcessSteps
 
@@ -59,7 +59,7 @@ struct PresentingSearchResultsView: View
 
             HStack
             {
-                DismissSheetButton(isShowingSheet: $isShowingSheet)
+                DismissSheetButton()
 
                 Spacer()
 
@@ -93,9 +93,10 @@ struct PresentingSearchResultsView: View
                             catch let packageByUUIDRetrievalError
                             {
                                 AppConstants.logger.error("Failed while associating package with its ID: \(packageByUUIDRetrievalError, privacy: .public)")
-                                isShowingSheet = false
-                                appState.fatalAlertType = .couldNotAssociateAnyPackageWithProvidedPackageUUID
-                                appState.isShowingFatalError = true
+                                
+                                dismiss()
+                                
+                                appState.showAlert(errorToShow: .couldNotAssociateAnyPackageWithProvidedPackageUUID)
                             }
                         }
 

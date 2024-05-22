@@ -33,8 +33,20 @@ struct AboutView: View
             name: "about.thanks.1.name",
             reasonForAcknowledgement: "about.thanks.1.purpose",
             profileService: .github,
-            profileURL: URL(string: "https://github.com/sebj")!)
-        ,
+            profileURL: URL(string: "https://github.com/sebj")!
+        ),
+        AcknowledgedContributor(
+            name: "about.thanks.2.name",
+            reasonForAcknowledgement: "about.thanks.2-3.purpose",
+            profileService: .github,
+            profileURL: URL(string: "https://github.com/dimitribouniol")!
+        ),
+        AcknowledgedContributor(
+            name: "about.thanks.3.name",
+            reasonForAcknowledgement: "about.thanks.2-3.purpose",
+            profileService: .website,
+            profileURL: URL(string: "https://twos.dev")!
+        )
     ]
     private let acknowledgedContributors: [AcknowledgedContributor] = [
         AcknowledgedContributor(
@@ -286,5 +298,6 @@ struct AboutView: View
             .transaction { $0.animation = nil }
         }
         .padding()
+        //.fixedSize()
     }
 }

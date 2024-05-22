@@ -13,13 +13,11 @@ struct AddTapFinishedView: View
     
     let requestedTap: String
     
-    @Binding var isShowingSheet: Bool
-    
     var body: some View
     {
         ComplexWithIcon(systemName: "checkmark.seal")
         {
-            DisappearableSheet(isShowingSheet: $isShowingSheet)
+            DisappearableSheet
             {
                 HeadlineWithSubheadline(
                     headline: "add-tap.complete-\(requestedTap)",

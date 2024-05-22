@@ -3,13 +3,17 @@
 A fast GUI for Homebrew written in SwiftUI
 
 [![Mastodon Link](https://img.shields.io/mastodon/follow/108939255808776594?domain=https%3A%2F%2Fmstdn.social&label=Follow%20me%20for%20updates&style=flat)](https://mstdn.social/@davidbures)
-[![Mastodon Link](https://img.shields.io/discord/1083475351260377119?label=Talk%20to%20me%20on%20Discord&style=flat)](https://discord.gg/kUHg8uGHpG)
+[![Discord Link](https://img.shields.io/discord/1083475351260377119?label=Talk%20to%20me%20on%20Discord&style=flat)](https://discord.gg/kUHg8uGHpG)
 
 ## Special Thanks
 
 I'd like to personally thank [Seb Jachec](https://github.com/sebj) for implementing a system for getting real-time outputs of Brew commands. 
 
 Without his contribution, many of the processes that depend on real-time outputs, such as installation, uninstallation and updating of packages, would be impossible.
+
+I'd like to personally thank [Dmitri Bouniol](https://github.com/dimitribouniol) and [Ben Carlsson](https://twos.dev) for coming up with a way for self-compiled builds to bypass the license check.
+
+Without them, it would be impossible to have a free self-compiled version of the app.
 
 ## Advantages of Cork
 
@@ -29,6 +33,7 @@ Cork is not just an interface for Homebrew. It has many features that are either
 - [x] Knowing which packages you installed intentionally, and which packages were installed only as dependencies. While somewhat possible with the `brew leaves` command, it is often unreliable, often not listing packages that should be included.
 - [x] Updating of only selected packages. Again, while possible with Homebrew alone, Cork makes it so easy you wouldn't believe it is not this simple in Homebrew itself.
 - [x] Showing you exactly which packages a package is a dependency of. Super annoying in Homebrew, effortless with Cork.
+- [x] Effortlessly managing Homebrew services with a simple click of a button in a beutiful sub-window.
 - [x] And many other features! Just try Cork out and try finding them all 😉
 
 ## Getting Cork
@@ -101,22 +106,29 @@ Prerequisites:
 
 **Compiling Cork**
 
+0. I recommend you pick a version marked by one of the version tags. Those are released versions. If you decide to compile the current state of any of the branches, you might encounter experience-breaking bugs and unfinished features
 1. Clone this repo using `git clone https://github.com/buresdv/Cork.git && cd Cork && open Cork.xcodeproj`. Xcode will open the project
 2. Wait until all the dependencies are resolved. It should take a couple minutes at most
 3. In the file browser on the left, click `Cork` at the very top. It's the icon with the App Store logo
 4. In the pane that opens on the right, click `Signing & Capabilities` at the top
 5. Under `Signing`, switch the `Team` dropdown to `None`
 6. Under `Signing → macOS`, switch the `Signing Certificate` to `Sign to Run Locally`
-7. In the Menu Bar, click `Product → Archive` and wait for the building to finish
-8. A new window will open. From the list of Cork rows, select the topmost one, and click `Distribute App`
-9. In the popup that appears, click `Custom`, then click `Next` in the bottom right of the popup
-10. Click `Copy App`
-11. Open the resulting folder. You'll see an app called Cork. Drag Cork to your `/Applications/` folder, and you're done!
+7. If it isn't already selected, change the Build Scheme to `Self-Compiled` in Xcode's toolbar.
+![Build Scheme Selector](https://files.catbox.moe/ofufd1.jpg)
+> [!WARNING]  
+> If you don't select the correct Build Scheme, Cork will require you to put in a license.
+8. In the Menu Bar, click `Product → Archive` and wait for the building to finish
+9. A new window will open. From the list of Cork rows, select the topmost one, and click `Distribute App`
+10. In the popup that appears, click `Custom`, then click `Next` in the bottom right of the popup
+11. Click `Copy App`
+12. Open the resulting folder. You'll see an app called Cork. Drag Cork to your `/Applications/` folder, and you're done!
 
 ## License
 
 Cork is licensed under [Commons Clause](https://commonsclause.com).
 
-This means that Cork open-source and you can do whatever you want with Cork's source, like modifying it, contributing to it etc., but you can't sell Cork or modified versions of it.
+This means that Cork open-source and you can do whatever you want with Cork's source, like modifying it, contributing to it etc., but you can't sell or distribute Cork or modified versions of it.
 
 Moreover, you can’t distribute compiled versions of Cork without consulting me first. Compiling versions for your personal use is fine.
+
+[![Mutable.ai Auto Wiki](https://img.shields.io/badge/Auto_Wiki-Mutable.ai-blue)](https://wiki.mutable.ai/buresdv/Cork)

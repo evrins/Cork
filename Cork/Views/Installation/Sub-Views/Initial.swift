@@ -25,7 +25,6 @@ struct InstallationInitialView: View
     @State private var isTopFormulaeSectionCollapsed: Bool = false
     @State private var isTopCasksSectionCollapsed: Bool = false
 
-    @Binding var isShowingSheet: Bool
     @Binding var packageRequested: String
 
     @Binding var foundPackageSelection: Set<UUID>
@@ -55,8 +54,15 @@ struct InstallationInitialView: View
                 }
                 else
                 {
-                    ProgressView("Loading top packages…")
-                        .frame(minHeight: 200)
+                    if appState.failedWhileLoadingTopPackages
+                    {
+                        NoContentAvailableView(title: "add-package.error.timed-out.title", systemImage: "exclamationmark.magnifyingglass")
+                    }
+                    else
+                    {
+                        ProgressView("Loading top packages…")
+                            .frame(minHeight: 200)
+                    }
                 }
             }
 
@@ -72,7 +78,7 @@ struct InstallationInitialView: View
 
             HStack
             {
-                DismissSheetButton(isShowingSheet: $isShowingSheet)
+                DismissSheetButton()
 
                 Spacer()
 
@@ -115,8 +121,7 @@ struct InstallationInitialView: View
                             
                             dismiss()
                             
-                            appState.fatalAlertType = .topPackageArrayFilterCouldNotRetrieveAnyPackages
-                            appState.isShowingFatalError = true
+                            appState.showAlert(errorToShow: .topPackageArrayFilterCouldNotRetrieveAnyPackages)
                             
                         }
                         

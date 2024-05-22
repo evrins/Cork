@@ -18,7 +18,7 @@ struct StartPage: View
     @EnvironmentObject var outdatedPackageTracker: OutdatedPackageTracker
 
     @State private var isOutdatedPackageDropdownExpanded: Bool = false
-    
+
     @State private var dragOver: Bool = false
 
     var body: some View
@@ -59,6 +59,7 @@ struct StartPage: View
 //                                        .clipShape(.capsule)
 //                                }
 //                                .buttonStyle(.plain)
+
                             }
                         }
 
@@ -82,7 +83,7 @@ struct StartPage: View
                     }
                     .scrollDisabled(!isOutdatedPackageDropdownExpanded)
 
-                    ButtonBottomRow 
+                    ButtonBottomRow
                     {
                         HStack
                         {
@@ -117,10 +118,9 @@ struct StartPage: View
                     switch outdatedPackageRetrievalError
                     {
                     case .homeNotSet:
-                        appState.fatalAlertType = .homePathNotSet
-                        appState.isShowingFatalError = true
+                        appState.showAlert(errorToShow: .homePathNotSet)
                     case .otherError:
-                            AppConstants.logger.error("Something went wrong")
+                        AppConstants.logger.error("Something went wrong")
                     }
                 }
                 catch
@@ -134,24 +134,52 @@ struct StartPage: View
                 }
             }
         }
-        .onDrop(of: [.fileURL], isTargeted: $dragOver) { providers -> Bool in
-            providers.first?.loadDataRepresentation(forTypeIdentifier: "public.file-url", completionHandler: { (data, error) in
-                if let data = data, let path = String(data: data, encoding: .utf8), let url = URL(string: path as String) {
-                    
-                    if url.pathExtension == "brewbak" || url.pathExtension.isEmpty {
+        .onDrop(of: [.fileURL], isTargeted: $dragOver)
+        { providers -> Bool in
+            providers.first?.loadDataRepresentation(forTypeIdentifier: "public.file-url", completionHandler: { data, _ in
+                if let data = data, let path = String(data: data, encoding: .utf8), let url = URL(string: path as String)
+                {
+                    if url.pathExtension == "brewbak" || url.pathExtension.isEmpty
+                    {
                         AppConstants.logger.debug("Correct File Format")
-                        
-                        Task(priority: .userInitiated) 
+
+                        Task(priority: .userInitiated)
                         {
                             try await importBrewfile(from: url, appState: appState, brewData: brewData)
                         }
-                        
-                    } else {
+                    }
+                    else
+                    {
                         AppConstants.logger.error("Incorrect file format")
                     }
                 }
             })
             return true
         }
+        .overlay
+        {
+            if dragOver
+            {
+                ZStack(alignment: .center)
+                {
+                    Rectangle()
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                        .foregroundColor(Color(nsColor: .gridColor))
+                    
+                    VStack(alignment: .center, spacing: 10)
+                    {
+                        Image(systemName: "square.and.arrow.down")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 100)
+                        
+                        Text("navigation.menu.import-export.import-brewfile")
+                            .font(.largeTitle)
+                    }
+                    .foregroundColor(Color(nsColor: .secondaryLabelColor))
+                }
+            }
+        }
+        .animation(.easeInOut, value: dragOver)
     }
 }

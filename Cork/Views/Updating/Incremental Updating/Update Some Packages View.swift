@@ -10,9 +10,9 @@ import SwiftUI
 
 struct UpdateSomePackagesView: View
 {
+    @EnvironmentObject var appState: AppState
+    @EnvironmentObject var brewData: BrewDataStorage
     @EnvironmentObject var outdatedPackageTracker: OutdatedPackageTracker
-
-    @Binding var isShowingSheet: Bool
 
     @State private var packageUpdatingStage: PackageUpdatingStage = .updating
     @State private var packageBeingCurrentlyUpdated: BrewPackage = .init(name: "", isCask: false, installedOn: nil, versions: [], sizeInBytes: nil)
@@ -88,10 +88,21 @@ struct UpdateSomePackagesView: View
                         packageUpdatingStage = .finished
                     }
                     
-                    outdatedPackageTracker.outdatedPackages = removeUpdatedPackages(outdatedPackageTracker: outdatedPackageTracker, namesOfUpdatedPackages: selectedPackages.map(\.package.name))
+                    do
+                    {
+                        outdatedPackageTracker.outdatedPackages = try await getListOfUpgradeablePackages(brewData: brewData)
+                    }
+                    catch let packageSynchronizationError
+                    {
+                        AppConstants.logger.error("Could not synchronize packages: \(packageSynchronizationError, privacy: .public)")
+                        appState.showAlert(errorToShow: .couldNotSynchronizePackages)
+                    }
+                    
+                    /// Old way of synchronizing outdated packages that sometimes didn't synchronize properly
+                    // outdatedPackageTracker.outdatedPackages = removeUpdatedPackages(outdatedPackageTracker: outdatedPackageTracker, namesOfUpdatedPackages: selectedPackages.map(\.package.name))
                 }
             case .finished:
-                DisappearableSheet(isShowingSheet: $isShowingSheet)
+                DisappearableSheet
                 {
                     ComplexWithIcon(systemName: "checkmark.seal")
                     {
@@ -128,7 +139,7 @@ struct UpdateSomePackagesView: View
                         HStack
                         {
                             Spacer()
-                            DismissSheetButton(isShowingSheet: $isShowingSheet, customButtonText: "action.close")
+                            DismissSheetButton(customButtonText: "action.close")
                         }
                     }
                     .fixedSize()
